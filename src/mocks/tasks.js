@@ -2,15 +2,18 @@ const uuidv4 = require('uuid/v4');
 let items = [
 		    {
 		    	id: uuidv4(),
-		        name: 'ABC'
+		        name: 'ABC',
+		        level: 1
 		    },
 		    {
 		    	id: uuidv4(),
-		        name: 'aaaa'
+		        name: 'aaaa',
+		        level: 2
 		    },
 		    {
 		    	id: uuidv4(),
-		        name: 'bbbbbbb'
+		        name: 'bbbbbbb',
+		        level: 3
 		    }
 		]
 

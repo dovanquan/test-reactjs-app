@@ -15,7 +15,7 @@ class List extends Component {
             <Item key={index} item={item} index={index} />
         );
     })
-        return (
+    return (
      	<div className="panel panel-success">
             <div className="panel-heading">List Task</div>
             <table className="table table-hover ">
