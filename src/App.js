@@ -7,13 +7,18 @@ import './App.css';
 
 import tasks from './mocks/tasks';
 class App extends Component {
+
+
     constructor(props) {
         super(props);
-            this.state = {
-                items:tasks,
-                isShowForm: false
-            }
-            this.onHandleToogleForm = this.onHandleToogleForm.bind(this)
+        this.state = {
+            items       : tasks,
+            isShowForm  : false,
+            strSearch   : ''
+        };
+        this.onHandleToogleForm = this.onHandleToogleForm.bind(this);
+        this.closeForm          = this.closeForm.bind(this);
+        this.handleSearh        = this.handleSearh.bind(this);
     }
 
     onHandleToogleForm = () => {
@@ -22,12 +27,25 @@ class App extends Component {
         })
     }
 
+    closeForm = () => {
+        this.setState({
+            isShowForm: false
+        })
+    }
+
+    handleSearh(value){
+        this.setState({
+            strSearch: value
+        });
+    }
+
   render() {
-    let { items,isShowForm } = this.state
+    let { items, isShowForm, strSearch } = this.state
     let elmForm = null
+    console.log(strSearch);
 
     if (isShowForm) {
-        elmForm = <Form />;
+        elmForm = <Form onClickCancel={this.closeForm} />;
     }
 
     return (
@@ -36,7 +54,11 @@ class App extends Component {
             <Title />
             {/* TITLE : END */}
             {/* CONTROL (SEARCH + SORT + ADD) : START */}
-            <Control onClickAdd={this.onHandleToogleForm} />
+            <Control
+                onClickAdd={this.onHandleToogleForm}
+                isShowForm={isShowForm}
+                onClickSearchGo={this.handleSearh}
+            />
             {/* CONTROL (SEARCH + SORT + ADD) : END */}
             {/* FORM : START */}
             {elmForm}
