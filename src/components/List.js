@@ -13,7 +13,8 @@ class List extends Component {
     const elmitems = items.map((item, index) => {
         return (
             <Item
-                onClickDelete={this.props.onClickDelete} 
+                onClickEdit={this.props.onClickEdit}
+                onClickDelete={this.props.onClickDelete}
                 key={index}
                 item={item}
                 index={index}

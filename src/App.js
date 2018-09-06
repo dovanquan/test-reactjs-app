@@ -4,8 +4,8 @@ import Control from './components/Control';
 import Form from './components/Form';
 import List from './components/List';
 import './App.css';
-import { filter, includes, orderBy as funcOrderBy, remove} from 'lodash';
-import tasks from './mocks/tasks';
+import { filter, includes, orderBy as funcOrderBy, remove, reject} from 'lodash';
+// import tasks from './mocks/tasks';
 const uuidv4 = require('uuid/v4');
 
 class App extends Component {
@@ -13,11 +13,12 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            items       : tasks,
+            items       : [],
             isShowForm  : false,
             strSearch   : '',
             orderBy     : 'name',
-            orderDir    : 'asc'
+            orderDir    : 'asc',
+            itemSelected : null
         };
         this.onHandleToogleForm = this.onHandleToogleForm.bind(this);
         this.closeForm          = this.closeForm.bind(this);
@@ -25,11 +26,24 @@ class App extends Component {
         this.handelSort        = this.handelSort.bind(this);
         this.handleDelete        = this.handleDelete.bind(this);
         this.handleSubmit        = this.handleSubmit.bind(this);
+        this.handleEdit        = this.handleEdit.bind(this);
+    }
+
+    componentWillMount(){
+        this.updateItems()
+    }
+
+    updateItems(item){
+        let items = JSON.parse(localStorage.getItem('task')) || [];
+        this.setState({
+            items: items
+        })
     }
 
     onHandleToogleForm(){
         this.setState({
-            isShowForm: !this.state.isShowForm
+            isShowForm: !this.state.isShowForm,
+            itemSelected : null
         })
     }
 
@@ -60,12 +74,20 @@ class App extends Component {
         this.setState({
             items: this.state.items
         })
+        localStorage.setItem('task', JSON.stringify(items));
     }
 
     handleSubmit(item){
         let {items} = this.state
+        let id = null
+        if (item.id !== '') {
+            items = reject(items, { id: item.id });
+            id = item.id
+        } else {
+            id = uuidv4()
+        }
         items.push({
-            id: uuidv4(),
+            id: id,
             name: item.name,
             level: +item.level
         })
@@ -73,13 +95,22 @@ class App extends Component {
             items: items,
             isShowForm: false
         })
+        localStorage.setItem('task', JSON.stringify(items));
     }
+
+    handleEdit(item){
+        this.setState({
+            itemSelected: item,
+            isShowForm: true
+        })
+    }
+
 
   render() {
     let itemOrigin = [...this.state.items]
     let items = []
     let elmForm = null
-    let { orderBy, orderDir, isShowForm, strSearch } = this.state
+    let { orderBy, orderDir, isShowForm, strSearch, itemSelected } = this.state
 
     //Search
     items = filter(itemOrigin, (item) => {
@@ -89,7 +120,7 @@ class App extends Component {
     items = funcOrderBy(items, [orderBy], [orderDir]);
 
     if (isShowForm) {
-        elmForm = <Form onClickSubmit={this.handleSubmit} onClickCancel={this.closeForm} />;
+        elmForm = <Form itemSelected={itemSelected} onClickSubmit={this.handleSubmit} onClickCancel={this.closeForm} />;
     }
 
     return (
@@ -112,7 +143,8 @@ class App extends Component {
             {/* FORM : END */}
             {/* LIST : START */}
             <List
-                onClickDelete={this.handleDelete} 
+                onClickEdit={this.handleEdit}
+                onClickDelete={this.handleDelete}
                 items={items}
             />
         </div>

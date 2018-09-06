@@ -3,18 +3,39 @@ import React, { Component } from 'react';
 class Form extends Component {
     constructor(props) {
         super(props);
-            this.state = {
-                task_name: '',
-                task_level: 0
-            }
-            this.handelCancel = this.handelCancel.bind(this)
-            this.handleChange = this.handleChange.bind(this);
-            this.handleSubmit = this.handleSubmit.bind(this);
+        this.state = {
+            task_id: '',
+            task_name: '',
+            task_level: 0
+        }
+        this.handelCancel = this.handelCancel.bind(this)
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
+
+    componentWillMount(){
+        this.updateItem(this.props.itemSelected)
+    }
+
+    componentWillReceiveProps(nextProps){
+        this.updateItem(nextProps.itemSelected)
+    }
+
+    updateItem(item){
+        if(item !== null) {
+            this.setState({
+                task_id: item.id,
+                task_name: item.name,
+                task_level: item.level,
+            });
+        }
+    }
+
 
     handelCancel(){
         this.props.onClickCancel()
     }
+
     handleChange(event){
         const target = event.target
         const value = target.value
@@ -26,6 +47,7 @@ class Form extends Component {
 
     handleSubmit(event) {
         let item = {
+            id: this.state.task_id,
             name: this.state.task_name,
             level: this.state.task_level
         }
